@@ -37,7 +37,19 @@ class DBLPScraper:
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, 'html.parser')
             titles = soup.find_all('span', {'class': 'title', 'itemprop': 'name'})
-            return [title.get_text(strip=True) for title in titles if title.get_text(strip=True)]
+
+            webs = []
+            # 找到所有 class 为 'publ' 的 nav 标签
+            nav_items = soup.find_all('nav', class_='publ')
+            for nav in nav_items:
+                a_tag = nav.find('a')  # 找到 nav 标签下的第一个 <a> 标签
+                if a_tag and 'href' in a_tag.attrs:  # 确保 <a> 标签有 href 属性
+                    href = a_tag['href']
+                    webs.append(href)  # 添加到 webs 列表
+
+            titles = [title.get_text(strip=True) for title in titles if title.get_text(strip=True)]
+            # webs = webs[5::4] #筛掉无用的网页
+            return titles , webs
         else:
             print(f"请求失败，状态码：{response.status_code}")
             return []

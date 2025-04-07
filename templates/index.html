@@ -1,44 +1,71 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>科学家文献查询</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBLP 文献搜索</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-  <div class="container">
-    <h1>🔍 科学家文献查询</h1>
-    <input type="text" id="nameInput" placeholder="请输入科学家姓名，如：Ya-Qin Zhang">
-    <button onclick="search()">搜索</button>
-    <ul id="resultList"></ul>
-  </div>
+    <div class="container">
+        <h1>科学家文献搜索</h1>
+        <div class="input-container">
+            <input type="text" id="scientist-name" placeholder="输入科学家名字" />
+            <button onclick="searchScientist()">搜索</button>
+        </div>
 
-  <script>
-    function search() {
-      const name = document.getElementById("nameInput").value;
-      fetch('/search', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ name: name })
-      })
-      .then(res => res.json())
-      .then(data => {
-        const list = document.getElementById("resultList");
-        list.innerHTML = "";
+        <div id="result-container">
+            <h2>文献列表</h2>
+            <ul id="publications-list"></ul>
+        </div>
+    </div>
 
-        if (data.success) {
-          data.publications.forEach(pub => {
-            const li = document.createElement("li");
-            li.textContent = pub;
-            list.appendChild(li);
-          });
-        } else {
-          const li = document.createElement("li");
-          li.textContent = "❌ " + data.message;
-          list.appendChild(li);
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function searchScientist() {
+            let name = document.getElementById("scientist-name").value.trim();
+            if (!name) {
+                alert("请输入科学家名字！");
+                return;
+            }
+
+            $.ajax({
+                url: '/search',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ 'name': name }),
+                success: function(response) {
+                    if (response.success) {
+                        displayPublications(response.publications, response.websites);
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function() {
+                    alert("请求失败，请稍后再试！");
+                }
+            });
         }
-      });
-    }
-  </script>
+
+        function displayPublications(publications, websites) {
+            const listContainer = document.getElementById("publications-list");
+            listContainer.innerHTML = '';  // 清空之前的结果
+
+            if (publications.length === 0) {
+                listContainer.innerHTML = "<li>未找到相关文献</li>";
+                return;
+            }
+
+            for (let i = 0; i < publications.length; i++) {
+                let li = document.createElement('li');
+                let a = document.createElement('a');
+                a.href = websites[i];  // 论文链接
+                a.target = '_blank';  // 新窗口打开
+                a.textContent = publications[i];  // 文献标题
+                li.appendChild(a);
+                listContainer.appendChild(li);
+            }
+        }
+    </script>
 </body>
 </html>

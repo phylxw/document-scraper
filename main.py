@@ -20,10 +20,12 @@ def main():
 
     if profile_url:
         print(f"找到个人主页：{profile_url}")
-        publications = scraper.get_publications(profile_url)
+        publications,webs = scraper.get_publications(profile_url)
         print("\n文献标题列表：")
-        for idx, title in enumerate(publications, 1):
+        for idx, (title, web) in enumerate(zip(publications, webs), 1):
             print(f"{idx}. {title}")
+            print(f"   链接: {web}")
+
     else:
         print("未能找到科学家的主页或文献。")
 
