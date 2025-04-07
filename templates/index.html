@@ -36,7 +36,8 @@
                 data: JSON.stringify({ 'name': name }),
                 success: function(response) {
                     if (response.success) {
-                        displayPublications(response.publications, response.websites);
+                        // 传递 publications, websites 和 years 到 displayPublications 函数
+                        displayPublications(response.publications, response.websites, response.years);
                     } else {
                         alert(response.message);
                     }
@@ -47,7 +48,7 @@
             });
         }
 
-        function displayPublications(publications, websites) {
+        function displayPublications(publications, websites, years) {
             const listContainer = document.getElementById("publications-list");
             listContainer.innerHTML = '';  // 清空之前的结果
 
@@ -58,14 +59,24 @@
 
             for (let i = 0; i < publications.length; i++) {
                 let li = document.createElement('li');
+
+                // 创建文献链接
                 let a = document.createElement('a');
                 a.href = websites[i];  // 论文链接
                 a.target = '_blank';  // 新窗口打开
                 a.textContent = publications[i];  // 文献标题
+
+                // 将年份附加到文献标题后面
+                let yearSpan = document.createElement('span');
+                yearSpan.textContent = ` (${years[i]})`;  // 年份，括号包围
+
+                // 将文献和年份添加到列表项
                 li.appendChild(a);
+                li.appendChild(yearSpan);  // 年份不附带超链接
                 listContainer.appendChild(li);
             }
         }
     </script>
 </body>
 </html>
+

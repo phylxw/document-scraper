@@ -39,7 +39,6 @@ class DBLPScraper:
             titles = soup.find_all('span', {'class': 'title', 'itemprop': 'name'})
 
             webs = []
-            # 找到所有 class 为 'publ' 的 nav 标签
             nav_items = soup.find_all('nav', class_='publ')
             for nav in nav_items:
                 a_tag = nav.find('a')  # 找到 nav 标签下的第一个 <a> 标签
@@ -47,9 +46,12 @@ class DBLPScraper:
                     href = a_tag['href']
                     webs.append(href)  # 添加到 webs 列表
 
+            dates = soup.find_all('span', itemprop='datePublished')
+            years = [date.get_text(strip=True) for date in dates if date.get_text(strip=True)]
+
             titles = [title.get_text(strip=True) for title in titles if title.get_text(strip=True)]
             # webs = webs[5::4] #筛掉无用的网页
-            return titles , webs
+            return titles , webs , years
         else:
             print(f"请求失败，状态码：{response.status_code}")
             return []
