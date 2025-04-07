@@ -20,8 +20,8 @@ def main():
 
     if profile_url:
         print(f"找到个人主页：{profile_url}")
-        publications,webs,years = scraper.get_publications(profile_url)
-        print("\n文献标题列表：")
+        publications,webs,years,name = scraper.get_publications(profile_url)
+        print(f"\n{name}的文献标题列表：")
         for idx, (title, web ,year) in enumerate(zip(publications, webs ,years), 1):
             print(f"{idx}. {title}")
             print(f"   链接: {web},    年份：{year}")

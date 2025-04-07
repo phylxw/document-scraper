@@ -23,8 +23,8 @@ def search():
     if not url:
         return jsonify({'success': False, 'message': '科学家主页未找到'})
 
-    publications,webs,years = scraper.get_publications(url)
-    return jsonify({'success': True, 'publications': publications,'websites': webs,'years': years})
+    publications,webs,years,name = scraper.get_publications(url)
+    return jsonify({'success': True, 'publications': publications,'websites': webs,'years': years,'name':name})
 
 
 if __name__ == '__main__':

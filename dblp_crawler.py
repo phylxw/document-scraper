@@ -50,8 +50,11 @@ class DBLPScraper:
             years = [date.get_text(strip=True) for date in dates if date.get_text(strip=True)]
 
             titles = [title.get_text(strip=True) for title in titles if title.get_text(strip=True)]
+
+            name = soup.find('span', class_='name primary', itemprop='name').get_text(strip=True)
+
             # webs = webs[5::4] #筛掉无用的网页
-            return titles , webs , years
+            return titles , webs , years , name
         else:
             print(f"请求失败，状态码：{response.status_code}")
             return []

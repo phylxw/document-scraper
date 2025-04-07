@@ -1,82 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DBLP 文献搜索</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>科学家文献检索</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="../static/style.css">
 </head>
 <body>
     <div class="container">
-        <h1>科学家文献搜索</h1>
-        <div class="input-container">
-            <input type="text" id="scientist-name" placeholder="输入科学家名字" />
-            <button onclick="searchScientist()">搜索</button>
+        <header>
+            <div class="header-content">
+                <div class="decoration decoration-1"></div>
+                <div class="decoration decoration-2"></div>
+                <h1>文献检索</h1>
+                <p class="subtitle">探索科学家的学术成果，发现知识的无限可能</p>
+                <div class="search-container">
+                    <div class="search-box">
+                        <input type="text" class="search-input" id="scientistName" placeholder="输入科学家的英文名，例如：Ya-Qin Zhang" autocomplete="off">
+                        <button class="search-button" id="searchButton">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="loading" id="loadingIndicator">
+            <div class="spinner"></div>
+            <p>正在搜索科学家的文献，请稍候...</p>
         </div>
 
-        <div id="result-container">
-            <h2>文献列表</h2>
-            <ul id="publications-list"></ul>
+        <div class="error-message" id="errorMessage">
+            <i class="fas fa-exclamation-circle"></i>
+            <p id="errorText">科学家主页未找到，请尝试其他姓名</p>
+        </div>
+
+        <div class="results-container" id="resultsContainer">
+            <div class="results-header">
+                <h2 class="results-title" id="resultsTitle">搜索结果</h2>
+                <span class="results-count" id="resultsCount">0 篇文献</span>
+            </div>
+            <ul class="publications-list" id="publicationsList">
+                <!-- 文献列表将在这里动态生成 -->
+            </ul>
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        function searchScientist() {
-            let name = document.getElementById("scientist-name").value.trim();
-            if (!name) {
-                alert("请输入科学家名字！");
-                return;
-            }
+    <footer>
+        <p>© 2025 made by 陈佳阳 | 科学家文献搜索系统 | 用知识连接世界</p>
+    </footer>
 
-            $.ajax({
-                url: '/search',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ 'name': name }),
-                success: function(response) {
-                    if (response.success) {
-                        // 传递 publications, websites 和 years 到 displayPublications 函数
-                        displayPublications(response.publications, response.websites, response.years);
-                    } else {
-                        alert(response.message);
-                    }
-                },
-                error: function() {
-                    alert("请求失败，请稍后再试！");
-                }
-            });
-        }
-
-        function displayPublications(publications, websites, years) {
-            const listContainer = document.getElementById("publications-list");
-            listContainer.innerHTML = '';  // 清空之前的结果
-
-            if (publications.length === 0) {
-                listContainer.innerHTML = "<li>未找到相关文献</li>";
-                return;
-            }
-
-            for (let i = 0; i < publications.length; i++) {
-                let li = document.createElement('li');
-
-                // 创建文献链接
-                let a = document.createElement('a');
-                a.href = websites[i];  // 论文链接
-                a.target = '_blank';  // 新窗口打开
-                a.textContent = publications[i];  // 文献标题
-
-                // 将年份附加到文献标题后面
-                let yearSpan = document.createElement('span');
-                yearSpan.textContent = ` (${years[i]})`;  // 年份，括号包围
-
-                // 将文献和年份添加到列表项
-                li.appendChild(a);
-                li.appendChild(yearSpan);  // 年份不附带超链接
-                listContainer.appendChild(li);
-            }
-        }
-    </script>
+    <script src="../static/script.js"></script>
 </body>
 </html>
-
